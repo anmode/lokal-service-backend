@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const tagRoutes = require('./routes/tagRoutes');
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ const serviceRoutes = require('./routes/serviceRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes);
+app.use('/api', tagRoutes);
 
 app.get('/', (req, res) => {
   res.send('Lokal Service API is running');

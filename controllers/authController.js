@@ -19,13 +19,12 @@ exports.googleAuth = async (req, res) => {
     });
     const payload = ticket.getPayload();
 
-    const { sub, email, name, picture } = payload;
+    const { email, name, picture } = payload;
 
-    let user = await User.findOne({ googleId: sub });
+    let user = await User.findOne({ email: email });
 
     if (!user) {
       user = new User({
-        googleId: sub,
         email,
         name,
         profilePicture: picture,

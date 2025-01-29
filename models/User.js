@@ -6,11 +6,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: uuidv4,
   },
-  googleId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   email: {
     type: String,
     required: true,
@@ -24,14 +19,9 @@ const UserSchema = new mongoose.Schema({
   },
   profilePicture: {
     type: String,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  }
+},{ timestamps: true });
 
-// Set _id as the primary key
 UserSchema.set('toJSON', {
   transform: (doc, ret) => {
     ret.id = ret._id;

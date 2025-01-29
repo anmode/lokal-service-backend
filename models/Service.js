@@ -12,16 +12,28 @@ const ServiceSchema = new mongoose.Schema({
   serviceType: {
     type: String,
     required: true,
-    enum: ['plumber', 'electrician', 'carpenter', 'cleaner', 'other'],
   },
-  tags: [String],
+  tags: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tag',
+  }],
   description: {
+    type: String,
+  },
+  address: {
     type: String,
     required: true,
   },
   location: {
-    type: String,
-    required: true,
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
   },
   contactNumber: {
     type: String,
@@ -31,6 +43,9 @@ const ServiceSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  category: {
+    type: String,
+  },
   reviews: [
     {
       userId: { type: String, ref: 'User' },
@@ -39,13 +54,17 @@ const ServiceSchema = new mongoose.Schema({
       createdAt: { type: Date, default: Date.now },
     },
   ],
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  isVerified: {
+    type: Boolean,
+    default: false,
   },
-});
+}, { timestamps: true });
 
-ServiceSchema.index({ tags: 'text', serviceType: 'text' });
+ServiceSchema.index({ serviceType: 'text' });
+ServiceSchema.index({ address: 'text' });
+ServiceSchema.index({ tags: 1 });
+ServiceSchema.index({ location: '2dsphere' });
+ServiceSchema.index({ tags: 1, location: '2dsphere' });
 
 ServiceSchema.set('toJSON', {
   transform: (doc, ret) => {

@@ -3,7 +3,7 @@ const Service = require('../models/Service');
 /**
  * Generates the next service ID for a given user.
  * @param {String} userId - The UUID of the user.
- * @returns {String} - The generated service ID.
+ * @returns {String} - The generated service ID.x
  */
 const generateServiceId = async (userId) => {
   const latestService = await Service.findOne({ userId })
