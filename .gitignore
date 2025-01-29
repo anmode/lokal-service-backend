@@ -37,3 +37,4 @@ temp/
 # Miscellaneous
 *.pem
 *.p12
+.vercel
