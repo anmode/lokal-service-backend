@@ -14,6 +14,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Initialize Passport (configuration is in config/passport.js)
+require('./config/passport');
+
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
@@ -28,4 +31,3 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-module.exports = app;
