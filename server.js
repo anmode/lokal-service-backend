@@ -4,6 +4,9 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const tagRoutes = require('./routes/tagRoutes');
 
+app.set('trust proxy', 1);
+
+
 dotenv.config();
 
 connectDB();
