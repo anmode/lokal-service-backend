@@ -48,6 +48,18 @@ exports.createService = async (req, res) => {
   }
 };
 
+exports.getUserServices = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    console.log(userId);
+    const services = await Service.find({ userId });
+    res.status(200).json({ services });
+  } catch (error) {
+    console.error('Error fetching user services:', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 exports.getServices = async (req, res) => {
   try {
@@ -58,6 +70,8 @@ exports.getServices = async (req, res) => {
       page = 1,
       limit = 10,
     } = req.query;
+
+    console.log(req.query);
 
     if (!tag) {
       return res.status(400).json({ message: 'Tag parameter is required.' });
@@ -100,6 +114,8 @@ exports.getServices = async (req, res) => {
       skip,
       parsedLimit
     );
+
+    console.log(services);
 
     const totalPages = Math.ceil(totalCount / parsedLimit);
 

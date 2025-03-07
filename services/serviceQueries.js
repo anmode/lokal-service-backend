@@ -1,4 +1,5 @@
 const Service = require('../models/Service');
+const mongoose = require('mongoose');
 
 /**
  * Fetch services by tag within a certain distance using $geoNear.
@@ -11,16 +12,16 @@ const Service = require('../models/Service');
  * @returns {Object}            - { services: [], totalCount: number }
  */
 async function getServicesByTagAndLocation(tagId, lat, lon, radiusMeters, skip, limit) {
+  // Convert tagId to an ObjectId
+  const tagObjectId = new mongoose.Types.ObjectId(String(tagId));
+
   const pipeline = [
     {
       $geoNear: {
-        near: {
-          type: 'Point',
-          coordinates: [lon, lat],
-        },
+        near: { type: 'Point', coordinates: [lon, lat] },
         distanceField: 'dist.calculated',
-        maxDistance: 8000,
-        query: { tags: tagId },
+        maxDistance: radiusMeters, // e.g., 10000 for 10km
+        // query: { tags: tagObjectId },
         spherical: true,
         key: 'location',
       },
@@ -34,10 +35,7 @@ async function getServicesByTagAndLocation(tagId, lat, lon, radiusMeters, skip, 
       },
     },
     {
-      $unwind: {
-        path: '$userInfo',
-        preserveNullAndEmptyArrays: true,
-      },
+      $unwind: { path: '$userInfo', preserveNullAndEmptyArrays: true },
     },
     {
       $lookup: {
@@ -58,6 +56,17 @@ async function getServicesByTagAndLocation(tagId, lat, lon, radiusMeters, skip, 
       },
     },
   ];
+
+  // Debug: log each stage result
+  // for (let i = 1; i <= pipeline.length; i++) {
+  //   try {
+  //     const partialPipeline = pipeline.slice(0, i);
+  //     const partialResult = await Service.aggregate(partialPipeline);
+  //     console.log(`After stage ${i} (${JSON.stringify(pipeline[i - 1])}):`, partialResult);
+  //   } catch (error) {
+  //     console.error(`Error at stage ${i}:`, error);
+  //   }
+  // }
 
   const results = await Service.aggregate(pipeline);
   const facetData = results[0] || {};
